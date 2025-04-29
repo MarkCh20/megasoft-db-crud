@@ -5,6 +5,7 @@ import org.megasoft.model.*;
 import java.sql.Connection;
 import java.util.List;
 import org.flywaydb.core.Flyway;
+import org.megasoft.service.ClientService;
 
 
 public class App {
