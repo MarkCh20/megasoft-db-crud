@@ -7,6 +7,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.megasoft.exception.DatabaseException;
+import org.megasoft.exception.ClientNotFoundException;
+
 public class ClientDao {
 
     private final Connection connection;
@@ -23,7 +26,7 @@ public class ClientDao {
                 return rs.next() && rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error checking client existence: " + e.getMessage(), e);
+            throw new DatabaseException("checking if client exists", e);
         }
     }
 
@@ -39,7 +42,7 @@ public class ClientDao {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error getting max id: " + e.getMessage(), e);
+            throw new DatabaseException("getting max client ID", e);
         }
 
         String insertSql = "INSERT INTO client (id, name) VALUES (?, ?)";
@@ -49,7 +52,7 @@ public class ClientDao {
             stmt.executeUpdate();
             return newId;
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating client: " + e.getMessage(), e);
+            throw new DatabaseException("creating new client", e);
         }
     }
 
@@ -61,11 +64,11 @@ public class ClientDao {
                 if (rs.next()) {
                     return new Client(rs.getLong("id"), rs.getString("name"));
                 } else {
-                    throw new RuntimeException("Client with ID " + id + " not found.");
+                    throw new ClientNotFoundException(id);
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error fetching client: " + e.getMessage(), e);
+            throw new DatabaseException("fetching client by ID", e);
         }
     }
 
@@ -76,10 +79,10 @@ public class ClientDao {
             stmt.setLong(2, id);
             int updated = stmt.executeUpdate();
             if (updated == 0) {
-                throw new RuntimeException("Client with ID " + id + " not found for update.");
+                throw new ClientNotFoundException(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating client: " + e.getMessage(), e);
+            throw new DatabaseException("updating client name", e);
         }
     }
 
@@ -89,10 +92,10 @@ public class ClientDao {
             stmt.setLong(1, id);
             int deleted = stmt.executeUpdate();
             if (deleted == 0) {
-                throw new RuntimeException("Client with ID " + id + " not found for deletion.");
+                throw new ClientNotFoundException(id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting client: " + e.getMessage(), e);
+            throw new DatabaseException("deleting client by ID", e);
         }
     }
 
@@ -105,7 +108,7 @@ public class ClientDao {
                 clients.add(new Client(rs.getLong("id"), rs.getString("name")));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error listing clients: " + e.getMessage(), e);
+            throw new DatabaseException("listing all clients", e);
         }
         return clients;
     }

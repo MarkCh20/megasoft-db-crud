@@ -2,6 +2,7 @@ package org.megasoft.service;
 
 import org.megasoft.dao.ClientDao;
 import org.megasoft.model.Client;
+import org.megasoft.exception.ClientAlreadyExistsException;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ClientService {
     public long create(String name) {
         validateName(name);
         if (clientDao.existsByName(name)) {
-            throw new RuntimeException("Client with such name already exists.");
+            throw new ClientAlreadyExistsException(name);
         }
         return clientDao.create(name);
     }

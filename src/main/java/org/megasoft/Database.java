@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.megasoft.exception.DatabaseException;
+
 public class Database {
 
     private static final String URL = "jdbc:h2:./target/megasoft_db";
@@ -15,7 +17,7 @@ public class Database {
             this.connection = DriverManager.getConnection(URL, "sa", null);
         } catch (SQLException e) {
             System.err.println("[ERROR] Cannot connect to DB: " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new DatabaseException("connecting to database", e);
         }
     }
 
